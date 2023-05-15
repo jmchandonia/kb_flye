@@ -158,9 +158,9 @@ class kb_flyeTest(unittest.TestCase):
         # print('Handle service url ' + cls.hs.url)                                                 
         print('staging data')
 
-        reads = {'file': 'data/E_coli_PacBio_40x.fasta.gz',
-                 'name': 'reads.fasta',
-                 'type': 'fasta'}
+        reads = {'file': 'data/E_coli_PacBio_40x.fastq.gz',
+                 'name': 'reads.fastq',
+                 'type': 'fastq'}
         cls.upload_reads('reads', {'single_genome': 1}, reads,
                          single_end=True, sequencing_tech="Pacbio")
 
