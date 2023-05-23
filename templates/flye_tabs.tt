@@ -1,0 +1,38 @@
+[%
+  table_id           = 'flye_table';
+  include_datatables = 1;
+  template_debug_view = 0;
+
+  PROCESS 'views/inc/macros.tt';
+  PROCESS 'views/inc/js.tt';
+  WRAPPER 'views/inc/page_wrapper.tt';
+
+    page_content = [
+      {
+        name    => 'QUAST Report',
+        name_lc => 'quast_tab',
+        rendered_content => quast_output,
+      },
+      {
+        name    => 'Contigs Report',
+        name_lc => 'table_tab',
+        content => 'table',
+        table_config  => {
+          id                => table_id,
+          for_datatables_js => 1,
+        },
+      },
+      {
+        name    => 'Flye Log',
+        name_lc => 'log_tab',
+        rendered_content => flye_log,
+      },
+    ];
+
+    tabbed_layout;
+
+    PROCESS default_datatables_js;
+
+  END; # end page wrapper
+
+%]
