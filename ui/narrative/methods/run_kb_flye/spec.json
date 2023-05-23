@@ -1,24 +1,36 @@
 {
-    "ver": "0.0.1",
+    "ver": "0.1.0",
     "authors": [
         "jmc"
     ],
-    "contact": "",
-    "categories": ["active"],
+    "contact": "http://kbase.us/contact-us/",
+    "categories": ["active", "assembly"],
     "widgets": {
         "input": null,
-        "output": null
+        "output": "no-display"
     },
     "parameters": [ 
         {
-            "id": "parameter_1",
-            "optional": true,
+            "id": "pacbio_raw_reads",
+            "optional": false,
             "advanced": false,
             "allow_multiple": false,
             "default_values": [ "" ],
             "field_type": "text",
             "text_options": {
-                "valid_ws_types": [ ]
+                "valid_ws_types": ["KBaseAssembly.SingleEndLibrary", "KBaseFile.SingleEndLibrary", "KBaseAssembly.PairedEndLibrary", "KBaseFile.PairedEndLibrary"]
+            }
+        },
+        {
+            "id": "output_contigset_name",
+            "optional": false,
+            "advanced": false,
+            "allow_multiple": false,
+            "default_values": ["flye.contigs"],
+            "field_type": "text",
+            "text_options": {
+                "valid_ws_types" : [ "KBaseGenomeAnnotations.Assembly" ],
+                "is_output_name":true
             }
         }
     ],
@@ -31,12 +43,14 @@
                 {
                     "narrative_system_variable": "workspace",
                     "target_property": "workspace_name"
-                },{
-                    "narrative_system_variable": "workspace_id",
-                    "target_property": "workspace_id"
-                },{
-                    "input_parameter": "parameter_1",
-                    "target_property": "parameter_1"
+                },
+                {
+                    "input_parameter": "pacbio_raw_reads",
+                    "target_property": "pacbio_raw_reads"
+                },
+                {
+                    "input_parameter": "output_contigset_name",
+                    "target_property": "output_contigset_name"
                 }
             ],
             "output_mapping": [
