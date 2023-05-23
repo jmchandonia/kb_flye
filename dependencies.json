@@ -11,6 +11,10 @@
   "type" : "sdk",
   "version_tag" : "release"
 }, {
+  "module_name" : "kb_quast",
+  "type" : "sdk",
+  "version_tag" : "release"
+}, {
   "module_name" : "KBaseReport",
   "type" : "sdk",
   "version_tag" : "release"
