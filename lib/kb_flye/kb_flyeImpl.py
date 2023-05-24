@@ -396,7 +396,7 @@ class kb_flye:
         # download long library
         longLib = self.download_long(
             console, warnings, token, params['workspace_name'], params['pacbio_raw_reads'], 1000)
-        cmd += ' --pacbio_raw '+longLib
+        cmd += ' --pacbio-raw '+longLib
 
         # output directory
         outputDir = os.path.join(self.scratch, "flye_"+str(uuid.uuid4()))
