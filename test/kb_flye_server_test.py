@@ -193,7 +193,7 @@ class kb_flyeTest(unittest.TestCase):
                         'objects': [{'ref': ret_obj['report_ref']}]})['data'][0]
         self.assertEqual('KBaseReport.Report', report['info'][2].split('-')[0])
         self.assertEqual(1, len(report['data']['objects_created']))
-        self.assertEqual('Assembly',
+        self.assertEqual('Assembled contigs',
                          report['data']['objects_created'][0]['description'])
         print("**************Report Message*************\n")
         print(report['data']['text_message'])
