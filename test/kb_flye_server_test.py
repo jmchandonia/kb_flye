@@ -174,16 +174,16 @@ class kb_flyeTest(unittest.TestCase):
 
     # NOTE: According to Python unittest naming rules test method names should start from 'test'. # noqa
     def run_flye(self,
-                 output_assembly,
-                 input_reads_library = None):
+                 output_contigset_name,
+                 pacbio_raw_reads = None):
 
         params = {'workspace_name': self.getWsName(),
-                  'output_assembly': output_assembly,
-                  'input_reads_library': input_reads_library
+                  'output_contigset_name': output_contigset_name,
+                  'pacbio_raw_reads': pacbio_raw_reads
                   }
 
         ret = self.serviceImpl.run_kb_flye(self.ctx, params)[0]
-        self.assertReportOK(ret, output_assembly)
+        self.assertReportOK(ret, output_contigset_name)
 
     def assertReportOK(self, ret_obj, assembly_name):
         """                                                                                         
@@ -201,5 +201,5 @@ class kb_flyeTest(unittest.TestCase):
 
     # Uncomment to skip this test                                                                   
     def test_pacbio(self):
-        self.run_flye( 'output_assembly',
-                       input_reads_library=self.staged['reads']['ref'])
+        self.run_flye( 'output_contigset_name',
+                       pacbio_raw_reads=self.staged['reads']['ref'])
