@@ -188,7 +188,7 @@ class kb_flyeTest(unittest.TestCase):
 
         params = {'workspace_name': self.getWsName(),
                   'output_contigset_name': output_contigset_name,
-                  'long_reads_library': long_reads_library
+                  'long_reads_library': long_reads_library,
                   'long_reads_type': long_reads_type,
                   'min_overlap': min_overlap,
                   'meta': meta

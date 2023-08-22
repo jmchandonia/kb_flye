@@ -383,7 +383,7 @@ class kb_flye:
             if required_param not in params or params[required_param] is None:
                 raise ValueError("Must define required param: '"+required_param+"'")
 
-        for params['long_reads_type'] not in ["pacbio-raw", "pacbio-corr", "pacbio-hifi", "nano-raw", "nano-corr", "nano-hq"]:
+        if params['long_reads_type'] not in ["pacbio-raw", "pacbio-corr", "pacbio-hifi", "nano-raw", "nano-corr", "nano-hq"]:
             raise ValueError("long reads type '"+str(params['long_reads_type'])+"' not supported by Flye")
 
         # load provenance
