@@ -159,10 +159,16 @@ class kb_flyeTest(unittest.TestCase):
         print('staging data')
 
         reads = {'file': 'data/E_coli_PacBio_40x.fastq.gz',
-                 'name': 'reads.fastq',
+                 'name': 'pacbio.fastq',
                  'type': 'fastq'}
-        cls.upload_reads('reads', {'single_genome': 1}, reads,
+        cls.upload_reads('pacbio', {'single_genome': 1}, reads,
                          single_end=True, sequencing_tech="Pacbio")
+
+        reads = {'file': 'data/Loman_E.coli_MAP006-1_2D_50x.fasta.gz',
+                 'name': 'nano.fastq',
+                 'type': 'fastq'}
+        cls.upload_reads('nano', {'single_genome': 1}, reads,
+                         single_end=True, sequencing_tech="ONT")
 
         print('Data staged.')
 
@@ -175,11 +181,19 @@ class kb_flyeTest(unittest.TestCase):
     # NOTE: According to Python unittest naming rules test method names should start from 'test'. # noqa
     def run_flye(self,
                  output_contigset_name,
-                 pacbio_raw_reads = None):
+                 pacbio_raw_reads = None,
+                 nano_raw_reads = None,
+                 nano_hq_reads = None,
+                 min_overlap = None,
+                 meta = None):
 
         params = {'workspace_name': self.getWsName(),
                   'output_contigset_name': output_contigset_name,
-                  'pacbio_raw_reads': pacbio_raw_reads
+                  'pacbio_raw_reads': pacbio_raw_reads,
+                  'nano_raw_reads': nano_raw_reads,
+                  'nano_hq_reads': nano_hq_reads,
+                  'min_overlap': min_overlap,
+                  'meta': meta
                   }
 
         ret = self.serviceImpl.run_kb_flye(self.ctx, params)[0]
@@ -202,4 +216,8 @@ class kb_flyeTest(unittest.TestCase):
     # Uncomment to skip this test                                                                   
     def test_pacbio(self):
         self.run_flye( 'output_contigset_name',
-                       pacbio_raw_reads=self.staged['reads']['ref'])
+                       pacbio_raw_reads=self.staged['pacbio']['ref'])
+
+    def test_nano_raw(self):
+        self.run_flye( 'output_contigset_name',
+                       nano_raw_reads=self.staged['nano']['ref'])
