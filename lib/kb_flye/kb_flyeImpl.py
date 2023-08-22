@@ -375,14 +375,16 @@ class kb_flye:
 
         # param checks
         required_params = ['workspace_name',
+                           'long_reads_library',
+                           'long_reads_type',
                            'output_contigset_name']
+
         for required_param in required_params:
             if required_param not in params or params[required_param] is None:
                 raise ValueError("Must define required param: '"+required_param+"'")
 
-        # needs either nano (raw or hq) or pacio reads
-        if ('pacbio_raw_reads' not in params or params['pacbio_raw_reads'] is None) and ('nano_raw_reads' not in params or params['nano_raw_reads'] is None) and ('nano_hq_reads' not in params or params['nano_hq_reads'] is None):
-            raise ValueError("Must define either pacbio_raw_reads or nano_raw_reads or nano_hq_reads")
+        for params['long_reads_type'] not in ["pacbio-raw", "pacbio-corr", "pacbio-hifi", "nano-raw", "nano-corr", "nano-hq"]:
+            raise ValueError("long reads type '"+str(params['long_reads_type'])+"' not supported by Flye")
 
         # load provenance
         provenance = [{}]
@@ -391,31 +393,17 @@ class kb_flye:
         if 'input_ws_objects' not in provenance[0]:
             provenance[0]['input_ws_objects'] = []
 
-        if 'pacbio_raw_reads' in params and params['pacbio_raw_reads'] is not None:
-            provenance[0]['input_ws_objects'].extend(params['pacbio_raw_reads'])
-        if 'nano_raw_reads' in params and params['nano_raw_reads'] is not None:
-            provenance[0]['input_ws_objects'].extend(params['nano_raw_reads'])
-        if 'nano_hq_reads' in params and params['nano_hq_reads'] is not None:
-            provenance[0]['input_ws_objects'].extend(params['nano_hq_reads'])
+        if 'long_reads_library' in params and params['long_reads_library'] is not None:
+            provenance[0]['input_ws_objects'].extend(params['long_reads_library'])
 
         # build command line
         cmd = '/kb/module/Flye-2.9.2/bin/flye'
 
         # download long library
-        if 'pacbio_raw_reads' in params and params['pacbio_raw_reads'] is not None:
+        if 'long_reads_library' in params and params['long_reads_library'] is not None:
             longLib = self.download_long(
-                console, warnings, token, params['workspace_name'], params['pacbio_raw_reads'], 1000)
-            cmd += ' --pacbio-raw '+longLib
-
-        if 'nano_raw_reads' in params and params['nano_raw_reads'] is not None:
-            longLib = self.download_long(
-                console, warnings, token, params['workspace_name'], params['nano_raw_reads'], 1000)
-            cmd += ' --nano-raw '+longLib
-
-        if 'nano_hq_reads' in params and params['nano_hq_reads'] is not None:
-            longLib = self.download_long(
-                console, warnings, token, params['workspace_name'], params['nano_hq_reads'], 1000)
-            cmd += ' --nano-hq '+longLib
+                console, warnings, token, params['workspace_name'], params['long_reads_library'], 1000)
+            cmd += ' --'+str(params['long_reads_type'])+' '+longLib
 
         if ('meta' in params and (params['meta'] == 1)):
             cmd += ' --meta'
