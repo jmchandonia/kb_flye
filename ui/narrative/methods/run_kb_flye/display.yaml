@@ -24,11 +24,29 @@ suggestions:
 # Configure the display and description of parameters
 #
 parameters :
-    pacbio_raw_reads :
+    long_reads_library :
         ui-name : |
-            Pacbio regular CLR reads
+            Long Reads Library
         short-hint : |
-            PacBio regular CLR reads (<20% error)
+            Must be PacBio or Oxford Nanopore.  Select the type and quality of the reads from the "long reads type" dropdown.
+
+    long_reads_type :
+        ui-name : |
+            Long Reads Type
+        short-hint : |
+            Select the type and quality of your reads from this list.
+
+    meta :
+        ui-name : |
+            metagenome / uneven coverage mode
+        short-hint : |
+            metagenome / uneven coverage mode (default: no)
+
+    min_overlap :
+        ui-name : |
+            minimum overlap between reads
+        short-hint : |
+            minimum overlap between reads (default: auto)
 
     output_contigset_name :
         ui-name : |
@@ -38,8 +56,6 @@ parameters :
 
 description : |
     <p>This is a KBase wrapper for the <a href="https://github.com/fenderglass/Flye">Flye assembler</a>. Flye is a de novo assembler for single-molecule sequencing reads, such as those produced by PacBio and Oxford Nanopore Technologies. It is designed for a wide range of datasets, from small bacterial projects to large mammalian-scale assemblies. The package represents a complete pipeline: it takes raw PacBio / ONT reads as input and outputs polished contigs.</p>
-
-    <p>This app does not currently support Flye's metagenome assembly mode.</p>
 
     <p>More details on Flye can be found in publication [1] at the bottom of this App detail page</p>
 

@@ -1,5 +1,5 @@
 {
-    "ver": "0.1.0",
+    "ver": "0.2.0",
     "authors": [
         "jmc"
     ],
@@ -11,7 +11,7 @@
     },
     "parameters": [ 
         {
-            "id": "pacbio_raw_reads",
+            "id": "long_reads_library",
             "optional": false,
             "advanced": false,
             "allow_multiple": false,
@@ -19,6 +19,65 @@
             "field_type": "text",
             "text_options": {
                 "valid_ws_types": ["KBaseAssembly.SingleEndLibrary", "KBaseFile.SingleEndLibrary", "KBaseAssembly.PairedEndLibrary", "KBaseFile.PairedEndLibrary"]
+            }
+        },
+        {
+            "id": "long_reads_type",
+            "optional": false,
+            "advanced": false,
+            "allow_multiple": false,
+	    "default_values": [ "normal" ],
+            "field_type": "dropdown",
+            "dropdown_options": {
+	        "options": [
+                    {
+                      "value": "pacbio-raw",
+                      "display": "PacBio regular CLR reads (<20% error)"
+                    },
+                    {
+                      "value": "pacbio-corr",
+                      "display": "PacBio reads that were corrected with other methods (<3% error)"
+                    },
+                    {
+                      "value": "pacbio-hifi",
+                      "display": "PacBio HiFi reads (<1% error)"
+                    },
+                    {
+                     "value": "nano-raw",
+                     "display": "ONT regular reads, pre-Guppy5 (<20% error)"
+                    },
+                    {
+                     "value": "nano-raw",
+                     "display": "NT reads that were corrected with other methods (<3% error)"
+                    },
+                    {
+                      "value": "nano-hq",
+                      "display": "ONT high-quality reads: Guppy5+ SUP or Q20 (<5% error)"
+                    }
+                  ]
+            }
+        },
+        {
+            "id": "meta",
+            "optional": true,
+            "advanced": true,
+            "allow_multiple": false,
+            "default_values": [ 0 ],
+            "field_type" : "checkbox",
+            "checkbox_options":{
+                "checked_value": 1,
+                "unchecked_value": 0
+            }
+        },
+        {
+            "id": "min_overlap",
+            "optional": true,
+            "advanced": true,
+            "allow_multiple": false,
+            "field_type": "text",
+            "text_options": {
+                "validate_as" : "int",
+                        "min_int" : 0
             }
         },
         {
@@ -45,8 +104,20 @@
                     "target_property": "workspace_name"
                 },
                 {
-                    "input_parameter": "pacbio_raw_reads",
-                    "target_property": "pacbio_raw_reads"
+                    "input_parameter": "long_reads_library",
+                    "target_property": "long_reads_library"
+                },
+                {
+                    "input_parameter": "long_reads_type",
+                    "target_property": "long_reads_type"
+                },
+                {
+                    "input_parameter": "meta",
+                    "target_property": "meta"
+                },
+                {
+                    "input_parameter": "min_overlap",
+                    "target_property": "min_overlap"
                 },
                 {
                     "input_parameter": "output_contigset_name",
