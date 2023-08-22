@@ -164,7 +164,7 @@ class kb_flyeTest(unittest.TestCase):
         cls.upload_reads('pacbio', {'single_genome': 1}, reads,
                          single_end=True, sequencing_tech="Pacbio")
 
-        reads = {'file': 'data/Loman_E.coli_MAP006-1_2D_50x.fasta.gz',
+        reads = {'file': 'data/Loman_E.coli_MAP006-1_2D_50x.fastq.gz',
                  'name': 'nano.fastq',
                  'type': 'fastq'}
         cls.upload_reads('nano', {'single_genome': 1}, reads,
