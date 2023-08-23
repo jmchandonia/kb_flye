@@ -38,15 +38,15 @@ parameters :
 
     meta :
         ui-name : |
-            metagenome / uneven coverage mode
+            Metagenome / uneven coverage mode
         short-hint : |
-            metagenome / uneven coverage mode (default: no)
+            Metagenome / uneven coverage mode (default: no)
 
     min_overlap :
         ui-name : |
-            minimum overlap between reads
+            Minimum overlap between reads
         short-hint : |
-            minimum overlap between reads (default: auto)
+            Minimum overlap between reads (default: auto)
 
     output_contigset_name :
         ui-name : |

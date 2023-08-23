@@ -26,7 +26,7 @@
             "optional": false,
             "advanced": false,
             "allow_multiple": false,
-	    "default_values": [ "normal" ],
+	    "default_values": [ "pacbio-raw" ],
             "field_type": "dropdown",
             "dropdown_options": {
 	        "options": [
@@ -44,15 +44,15 @@
                     },
                     {
                      "value": "nano-raw",
-                     "display": "ONT regular reads, pre-Guppy5 (<20% error)"
+                     "display": "Oxford Nanopore regular reads, pre-Guppy5 (<20% error)"
                     },
                     {
                      "value": "nano-raw",
-                     "display": "NT reads that were corrected with other methods (<3% error)"
+                     "display": "Oxford Nanopore reads that were corrected with other methods (<3% error)"
                     },
                     {
                       "value": "nano-hq",
-                      "display": "ONT high-quality reads: Guppy5+ SUP or Q20 (<5% error)"
+                      "display": "Oxford Nanopore high-quality reads: Guppy5+ SUP or Q20 (<5% error)"
                     }
                   ]
             }
