@@ -311,6 +311,8 @@ class kb_flye:
             if (n_reads_short > 0):
                 self.log(warnings, "Warning:  Of "+str(n_reads)+" long reads, "+str(n_reads_short)+" are shorter than " +
                          str(min_long_read_length)+"; consider using the filtlong app to filter out shorter reads.")
+            # work around minimap2 bug with long read names:
+            long_reads_path = self.rename_fastq(console, long_reads_path)
 
         except Exception as e:
             raise ValueError('Unable to download long reads\n' + str(e))
@@ -337,6 +339,22 @@ class kb_flye:
             self.log(console, str(n_reads)+' long reads found, ' +
                      str(n_reads_short)+' under '+str(min_length)+' bp')
         return [n_reads, n_reads_short, total_read_length]
+
+    # examine fastq files, count total read length
+    def rename_fastq(self, console, fastq_path):
+        directory, file_name = os.path.split(fastq_path)
+        renamed_fastq_path = os.path.join(directory,'renamed_'+file_name)
+        cmd = 'seqtk rename '+fastq_path+' short > '+renamed_fastq_path
+        self.log(console, "command: "+cmd)
+        cmdProcess = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                                      stderr=subprocess.STDOUT, shell=True)
+        for line in cmdProcess.stdout:
+            self.log(console, line.decode("utf-8").rstrip())
+        cmdProcess.wait()
+        if cmdProcess.returncode != 0:
+            raise ValueError('Error running '+cmd+'; see logs under "Job Status" for details.')
+        return renamed_fastq_path
+
     #END_CLASS_HEADER
 
     # config contains contents of config file in a hash or None if it couldn't
@@ -424,7 +442,7 @@ class kb_flye:
             self.log(console, line.decode("utf-8").rstrip())
         cmdProcess.wait()
         if cmdProcess.returncode != 0:
-            raise ValueError('Error running '+cmd)
+            raise ValueError('Error running '+cmd+'; see logs under "Job Status" for details.')
 
         # save assembly
         try:

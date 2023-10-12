@@ -1,6 +1,10 @@
 # kb_flye release notes
 =========================================
 
+0.2.1
+-----
+* Bug fix: rename all reads so that long read names will not crash minimap2
+
 0.2.0
 -----
 * Supports all reads types supported by Flye, exposes meta and min-overlap params

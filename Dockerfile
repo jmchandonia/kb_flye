@@ -17,7 +17,7 @@ RUN echo "deb http://deb.debian.org/debian buster main contrib" > /etc/apt/sourc
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 648ACFD622F3D138 0E98404D386FA1D9 DCC9EFBF77E11517
 
 RUN apt-get update \
-    && apt-get -y install wget curl python3 zlib1g-dev libgcc-8-dev libstdc++-8-dev gcc g++
+    && apt-get -y install wget curl python3 zlib1g-dev libgcc-8-dev libstdc++-8-dev gcc g++ seqtk
 
 RUN wget https://github.com/fenderglass/Flye/archive/refs/tags/2.9.2.tar.gz
 
