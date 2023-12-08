@@ -47,7 +47,7 @@
                      "display": "Oxford Nanopore regular reads, pre-Guppy5 (<20% error)"
                     },
                     {
-                     "value": "nano-raw",
+                     "value": "nano-corr",
                      "display": "Oxford Nanopore reads that were corrected with other methods (<3% error)"
                     },
                     {
