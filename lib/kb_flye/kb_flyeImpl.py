@@ -316,8 +316,8 @@ class kb_flye:
 
         except Exception as e:
             raise ValueError('Unable to download long reads\n' + str(e))
-        if (total_read_length > 1000000000):
-            raise ValueError('Too many long reads; total length is limited to 1 GB and you have '+str(total_read_length)+' B.  Use filtlong app to filter out lower quality reads.')
+        if (total_read_length > 10000000000):
+            raise ValueError('Too many long reads; total length is limited to 10 GB and you have '+str(total_read_length)+' B.  Use filtlong app to filter out lower quality reads.')
         return long_reads_path
 
     # examine fastq files, count total read length
