@@ -1,7 +1,7 @@
 #
 # define display information
 #
-name: Assemble Long Reads with Flye - v2.9.2
+name: Assemble Long Reads with Flye - v2.9.4
 
 tooltip: |
     Assemble long reads using the Flye assembler.
@@ -24,11 +24,11 @@ suggestions:
 # Configure the display and description of parameters
 #
 parameters :
-    long_reads_library :
+    long_reads_libraries :
         ui-name : |
-            Long Reads Library
+            Long Reads Libraries
         short-hint : |
-            Must be PacBio or Oxford Nanopore.  Select the type and quality of the reads from the "long reads type" dropdown.
+            Must all be the same type, PacBio or Oxford Nanopore.  Select the type and quality of the reads from the "long reads type" dropdown.
 
     long_reads_type :
         ui-name : |

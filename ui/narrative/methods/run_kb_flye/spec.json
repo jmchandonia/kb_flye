@@ -1,5 +1,5 @@
 {
-    "ver": "0.2.2",
+    "ver": "1.0",
     "authors": [
         "jmc"
     ],
@@ -11,10 +11,10 @@
     },
     "parameters": [ 
         {
-            "id": "long_reads_library",
+            "id": "long_reads_libraries",
             "optional": false,
             "advanced": false,
-            "allow_multiple": false,
+            "allow_multiple": true,
             "default_values": [ "" ],
             "field_type": "text",
             "text_options": {
@@ -104,8 +104,8 @@
                     "target_property": "workspace_name"
                 },
                 {
-                    "input_parameter": "long_reads_library",
-                    "target_property": "long_reads_library"
+                    "input_parameter": "long_reads_libraries",
+                    "target_property": "long_reads_libraries"
                 },
                 {
                     "input_parameter": "long_reads_type",

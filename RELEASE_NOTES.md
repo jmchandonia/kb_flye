@@ -1,6 +1,12 @@
 # kb_flye release notes
 =========================================
 
+1.0
+-----
+* Prep for non-beta release
+* Feature: allow multiple long reads objects
+* Update to Flye 2.9.4
+
 0.2.2
 -----
 * Bug fix: increase max long read total length to 10 Gbases

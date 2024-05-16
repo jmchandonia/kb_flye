@@ -181,14 +181,14 @@ class kb_flyeTest(unittest.TestCase):
     # NOTE: According to Python unittest naming rules test method names should start from 'test'. # noqa
     def run_flye(self,
                  output_contigset_name,
-                 long_reads_library = None,
+                 long_reads_libraries = None,
                  long_reads_type = None,
                  min_overlap = None,
                  meta = None):
 
         params = {'workspace_name': self.getWsName(),
                   'output_contigset_name': output_contigset_name,
-                  'long_reads_library': long_reads_library,
+                  'long_reads_libraries': long_reads_libraries,
                   'long_reads_type': long_reads_type,
                   'min_overlap': min_overlap,
                   'meta': meta
@@ -211,13 +211,15 @@ class kb_flyeTest(unittest.TestCase):
         print(report['data']['text_message'])
 
 
-    # Uncomment to skip this test                                                                   
+    # Uncomment to skip this test
+    # @unittest.skip("skipped test test_pacbio")
     def test_pacbio(self):
         self.run_flye( 'output_contigset_name',
-                       long_reads_library=self.staged['pacbio']['ref'],
+                       long_reads_libraries=[self.staged['pacbio']['ref']],
                        long_reads_type="pacbio-raw")
 
+    # @unittest.skip("skipped test test_nano_raw")
     def test_nano_raw(self):
         self.run_flye( 'output_contigset_name',
-                       long_reads_library=self.staged['nano']['ref'],
+                       long_reads_libraries=[self.staged['nano']['ref']],
                        long_reads_type="nano-raw")

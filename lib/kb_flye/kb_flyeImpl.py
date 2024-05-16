@@ -281,44 +281,48 @@ class kb_flye:
         return report_output['name'], report_output['ref']
 
     # get long reads
-    def download_long(self, console, warnings, token, wsname, lib, min_long_read_length):
+    def download_long(self, console, warnings, token, wsname, long_reads_libraries, min_long_read_length):
         try:
-            # object info
-            try:
-                wsClient = Workspace(self.workspaceURL, token=token)
-            except Exception as e:
-                raise ValueError("unable to instantiate wsClient. "+str(e))
-
-            [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I,
-                WORKSPACE_I, CHSUM_I, SIZE_I, META_I] = range(11)  # object_info tuple
-
-            obj_id = {'ref': lib if '/' in lib else (wsname + '/' + lib)}
-            lib_obj_info = wsClient.get_object_info_new({'objects': [obj_id]})[0]
-            lib_obj_type = lib_obj_info[TYPE_I]
-            lib_obj_type = re.sub('-[0-9]+\.[0-9]+$', "", lib_obj_type)  # remove trailing version
-            lib_ref = str(lib_obj_info[WSID_I])+'/' + \
-                str(lib_obj_info[OBJID_I])+'/'+str(lib_obj_info[VERSION_I])
-            total_read_length = 0
-
-            ruClient = ReadsUtils(url=self.callbackURL, token=token)
-            self.log(console, "Getting long reads (from reads library object).\n")
-            result = ruClient.download_reads({'read_libraries': [lib_ref],
-                                              'interleaved': 'false'})
-            long_reads_path = result['files'][lib_ref]['files']['fwd']
-            [n_reads, n_reads_short, total_read_length] = self.filter_short_fastq(
-                console, long_reads_path, min_long_read_length)
-
-            if (n_reads_short > 0):
-                self.log(warnings, "Warning:  Of "+str(n_reads)+" long reads, "+str(n_reads_short)+" are shorter than " +
-                         str(min_long_read_length)+"; consider using the filtlong app to filter out shorter reads.")
-            # work around minimap2 bug with long read names:
-            long_reads_path = self.rename_fastq(console, long_reads_path)
-
+            wsClient = Workspace(self.workspaceURL, token=token)
         except Exception as e:
-            raise ValueError('Unable to download long reads\n' + str(e))
+            raise ValueError("unable to instantiate wsClient. "+str(e))
+
+        [OBJID_I, NAME_I, TYPE_I, SAVE_DATE_I, VERSION_I, SAVED_BY_I, WSID_I,
+         WORKSPACE_I, CHSUM_I, SIZE_I, META_I] = range(11)  # object_info tuple
+
+        total_read_length = 0
+        long_reads_paths = []
+        for lib in long_reads_libraries:
+            try:
+                obj_id = {'ref': lib if '/' in lib else (wsname + '/' + lib)}
+                lib_obj_info = wsClient.get_object_info_new({'objects': [obj_id]})[0]
+                lib_obj_type = lib_obj_info[TYPE_I]
+                # remove trailing version
+                lib_obj_type = re.sub('-[0-9]+\.[0-9]+$', "", lib_obj_type)
+                lib_ref = str(lib_obj_info[WSID_I])+'/' + \
+                    str(lib_obj_info[OBJID_I])+'/'+str(lib_obj_info[VERSION_I])
+
+                ruClient = ReadsUtils(url=self.callbackURL, token=token)
+                self.log(console, "Getting long reads (from reads library object).\n")
+                result = ruClient.download_reads({'read_libraries': [lib_ref],
+                                                  'interleaved': 'false'})
+                long_reads_path = result['files'][lib_ref]['files']['fwd']
+                [n_reads, n_reads_short, total_lib_read_length] = self.filter_short_fastq(
+                    console, long_reads_path, min_long_read_length)
+                total_read_length += total_lib_read_length
+                    
+                if (n_reads_short > 0):
+                    self.log(warnings, "Warning:  Of "+str(n_reads)+" long reads, "+str(n_reads_short)+" are shorter than " +
+                             str(min_long_read_length)+"; consider using the filtlong app to filter out shorter reads.")
+                # work around minimap2 bug with long read names:
+                long_reads_path = self.rename_fastq(console, long_reads_path)
+                long_reads_paths.append(long_reads_path)
+                    
+            except Exception as e:
+                raise ValueError('Unable to download long reads\n' + str(e))
         if (total_read_length > 10000000000):
             raise ValueError('Too many long reads; total length is limited to 10 GB and you have '+str(total_read_length)+' B.  Use filtlong app to filter out lower quality reads.')
-        return long_reads_path
+        return long_reads_paths
 
     # examine fastq files, count total read length
     def filter_short_fastq(self, console, fastq_path, min_length):
@@ -343,7 +347,7 @@ class kb_flye:
     # examine fastq files, count total read length
     def rename_fastq(self, console, fastq_path):
         directory, file_name = os.path.split(fastq_path)
-        renamed_fastq_path = os.path.join(directory,'renamed_'+file_name)
+        renamed_fastq_path = os.path.join(directory, 'renamed_'+file_name)
         cmd = 'seqtk rename '+fastq_path+' short > '+renamed_fastq_path
         self.log(console, "command: "+cmd)
         cmdProcess = subprocess.Popen(cmd, stdout=subprocess.PIPE,
@@ -393,7 +397,7 @@ class kb_flye:
 
         # param checks
         required_params = ['workspace_name',
-                           'long_reads_library',
+                           'long_reads_libraries',
                            'long_reads_type',
                            'output_contigset_name']
 
@@ -402,7 +406,12 @@ class kb_flye:
                 raise ValueError("Must define required param: '"+required_param+"'")
 
         if params['long_reads_type'] not in ["pacbio-raw", "pacbio-corr", "pacbio-hifi", "nano-raw", "nano-corr", "nano-hq"]:
-            raise ValueError("long reads type '"+str(params['long_reads_type'])+"' not supported by Flye")
+            raise ValueError("long reads type '"+
+                             str(params['long_reads_type'])+
+                             "' not supported by Flye")
+
+        if len(params['long_reads_libraries']) == 0:
+            raise ValueError("Must provide at least one long reads library")
 
         # load provenance
         provenance = [{}]
@@ -410,18 +419,18 @@ class kb_flye:
             provenance = ctx['provenance']
         if 'input_ws_objects' not in provenance[0]:
             provenance[0]['input_ws_objects'] = []
-
-        if 'long_reads_library' in params and params['long_reads_library'] is not None:
-            provenance[0]['input_ws_objects'].extend(params['long_reads_library'])
+        provenance[0]['input_ws_objects'].extend(params['long_reads_libraries'])
 
         # build command line
-        cmd = '/kb/module/Flye-2.9.2/bin/flye'
+        cmd = '/kb/module/Flye-2.9.4/bin/flye'
 
-        # download long library
-        if 'long_reads_library' in params and params['long_reads_library'] is not None:
-            longLib = self.download_long(
-                console, warnings, token, params['workspace_name'], params['long_reads_library'], 1000)
-            cmd += ' --'+str(params['long_reads_type'])+' '+longLib
+        # download long libraries
+        if 'long_reads_libraries' in params and params['long_reads_libraries'] is not None:
+            longLibs = self.download_long(
+                console, warnings, token, params['workspace_name'], params['long_reads_libraries'], 1000)
+            cmd += ' --'+str(params['long_reads_type'])
+            for longLib in longLibs:
+                cmd += ' '+longLib
 
         if ('meta' in params and (params['meta'] == 1)):
             cmd += ' --meta'

@@ -19,11 +19,11 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 648ACFD622F3D138 0E
 RUN apt-get update \
     && apt-get -y install wget curl python3 zlib1g-dev libgcc-8-dev libstdc++-8-dev gcc g++ seqtk
 
-RUN wget https://github.com/fenderglass/Flye/archive/refs/tags/2.9.2.tar.gz
+RUN wget https://github.com/fenderglass/Flye/archive/refs/tags/2.9.4.tar.gz
 
-RUN tar xzvf 2.9.2.tar.gz
+RUN tar xzvf 2.9.4.tar.gz
 
-RUN cd Flye-2.9.2 && make
+RUN cd Flye-2.9.4 && make
 
 # -----------------------------------------
 
