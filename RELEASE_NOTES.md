@@ -1,7 +1,7 @@
 # kb_flye release notes
 =========================================
 
-1.0
+1.0.0
 -----
 * Prep for non-beta release
 * Feature: allow multiple long reads objects
