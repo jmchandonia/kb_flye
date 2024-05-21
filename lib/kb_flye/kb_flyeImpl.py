@@ -41,7 +41,7 @@ class kb_flye:
     # state. A method could easily clobber the state set by another while
     # the latter method is running.
     ######################################### noqa
-    VERSION = "0.0.2"
+    VERSION = "1.0.0"
     GIT_URL = ""
     GIT_COMMIT_HASH = ""
 
@@ -292,8 +292,10 @@ class kb_flye:
 
         total_read_length = 0
         long_reads_paths = []
+        i = 0
         for lib in long_reads_libraries:
             try:
+                i += 1
                 obj_id = {'ref': lib if '/' in lib else (wsname + '/' + lib)}
                 lib_obj_info = wsClient.get_object_info_new({'objects': [obj_id]})[0]
                 lib_obj_type = lib_obj_info[TYPE_I]
@@ -315,7 +317,7 @@ class kb_flye:
                     self.log(warnings, "Warning:  Of "+str(n_reads)+" long reads, "+str(n_reads_short)+" are shorter than " +
                              str(min_long_read_length)+"; consider using the filtlong app to filter out shorter reads.")
                 # work around minimap2 bug with long read names:
-                long_reads_path = self.rename_fastq(console, long_reads_path)
+                long_reads_path = self.rename_fastq(console, long_reads_path, i)
                 long_reads_paths.append(long_reads_path)
                     
             except Exception as e:
@@ -345,10 +347,10 @@ class kb_flye:
         return [n_reads, n_reads_short, total_read_length]
 
     # examine fastq files, count total read length
-    def rename_fastq(self, console, fastq_path):
+    def rename_fastq(self, console, fastq_path, index):
         directory, file_name = os.path.split(fastq_path)
         renamed_fastq_path = os.path.join(directory, 'renamed_'+file_name)
-        cmd = 'seqtk rename '+fastq_path+' short > '+renamed_fastq_path
+        cmd = 'seqtk rename '+fastq_path+' short'+str(index)+'- > '+renamed_fastq_path
         self.log(console, "command: "+cmd)
         cmdProcess = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                                       stderr=subprocess.STDOUT, shell=True)
