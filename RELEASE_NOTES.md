@@ -3,8 +3,9 @@
 
 1.0.0
 -----
-* Prep for non-beta release
+* Initial non-beta release
 * Feature: allow multiple long reads objects
+* Bug fix: fix contig info table
 * Update to Flye 2.9.4
 
 0.2.2

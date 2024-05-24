@@ -52,10 +52,7 @@ class kb_flye:
         print(message)
         sys.stdout.flush()
 
-    # from kb_SPAdes/utils/spades_utils.py:
-    def load_stats(self, console, input_file_name):
-        self.log(console, 'Starting conversion of FASTA to KBaseGenomeAnnotations.Assembly')
-        # self.log(console, 'Building Object.')
+    def load_stats(self, input_file_name):
         if not os.path.isfile(input_file_name):
             raise Exception('The input file name {0} is not a file!'.format(input_file_name))
         with open(input_file_name, 'r') as input_file_handle:
@@ -63,40 +60,14 @@ class kb_flye:
             sequence_len = 0
             length_dict = dict()
             coverage_dict = dict()
-            first_header_found = False
-            # Pattern for replacing white space
-            pattern = re.compile(r'\s+')
+            circular_dict = dict()
+            next(input_file_handle)
             for current_line in input_file_handle:
-                if (current_line[0] == '>'):
-                    # found a header line
-                    # Wrap up previous fasta sequence
-                    if not first_header_found:
-                        first_header_found = True
-                    else:
-                        length_dict[contig_id] = sequence_len
-                        sequence_len = 0
-                    fasta_header = current_line.replace('>', '').strip()
-                    # self.log(console, 'fasta header = '+fasta_header)
-                    try:
-                        fields = fasta_header.strip().split(' ')
-                        contig_id = fields[0]
-                        # don't trust length from header, we look at seqence:
-                        # sequence_len = int(fields[1][7:]) if (fields[1].startswith('length=')) else 0
-                        coverage = float(
-                            fields[2][6:-1]) if (fields[2].startswith('depth=')) else 0.0
-                        # length_dict[contig_id] = sequence_len
-                        coverage_dict[contig_id] = coverage
-                    except (IndexError, ValueError, KeyError):
-                        contig_id = fasta_header.strip()
-                        coverage_dict[contig_id] = 0
-                else:
-                    sequence_len += len(re.sub(pattern, '', current_line))
-        # wrap up last fasta sequence
-        if not first_header_found:
-            raise Exception("There are no contigs in this file")
-        else:
-            length_dict[contig_id] = sequence_len
-        return [length_dict, coverage_dict]
+                [contig_id, sequence_length, coverage, circular, *_] = re.split(r'\t+', current_line)
+                length_dict[contig_id] = sequence_len
+                coverage_dict[contig_id] = coverage
+                circular_dict[contig_id] = circular
+        return [length_dict, coverage_dict, circular_dict]
 
     # from kb_SPAdes/utils/spades_utils.py:
     def mkdir_p(self, path):
@@ -182,7 +153,8 @@ class kb_flye:
         self.log(console, 'Generating and saving report')
 
         fa_file_with_path = os.path.join(out_dir, fa_file_name)
-        [length_stats, coverage_stats] = self.load_stats(console, fa_file_with_path)
+        assembly_info = os.path.join(out_dir, 'assembly_info.txt')
+        [length_stats, coverage_stats, circular_stats] = self.load_stats(assembly_info)
         lengths = [length_stats[contig_id] for contig_id in length_stats]
 
         assembly_ref = wsname + '/' + params['output_contigset_name']
@@ -213,6 +185,7 @@ class kb_flye:
         contig_data = []
         for contig_id in length_stats:
             contig_data.append({'contig_id': contig_id,
+                                'circular': circular_stats[contig_id],
                                 'coverage': coverage_stats[contig_id],
                                 'length': length_stats[contig_id]})
 
