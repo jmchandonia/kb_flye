@@ -64,8 +64,8 @@ class kb_flye:
             next(input_file_handle)
             for current_line in input_file_handle:
                 [contig_id, sequence_length, coverage, circular, *_] = re.split(r'\t+', current_line)
-                length_dict[contig_id] = sequence_len
-                coverage_dict[contig_id] = coverage
+                length_dict[contig_id] = int(sequence_length)
+                coverage_dict[contig_id] = int(coverage)
                 circular_dict[contig_id] = circular
         return [length_dict, coverage_dict, circular_dict]
 
@@ -163,6 +163,7 @@ class kb_flye:
         report_text += 'Flye results saved to: ' + wsname + '/' + out_dir + '\n'
         report_text += 'Assembly saved to: ' + assembly_ref + '\n'
         report_text += 'Assembled into ' + str(len(lengths)) + ' contigs.\n'
+
         report_text += 'Avg Length: ' + str(sum(lengths) / float(len(lengths))) + ' bp.\n'
 
         # compute a simple contig length distribution
@@ -204,6 +205,7 @@ class kb_flye:
             'data_array': contig_data,
             'cols': [
                 {'data': 'contig_id',  'title': 'Contig ID'},
+                {'data': 'circular',   'title': 'Circular (Y/N)'},
                 {'data': 'coverage',   'title': 'Coverage (x)'},
                 {'data': 'length',   'title': 'Length (bp)'}
             ]
@@ -244,7 +246,7 @@ class kb_flye:
              'html_links': [{'path': out_dir,
                              'name': report_file,
                              'label': 'Flye report',
-                             'description': 'description of template report'
+                             'description': 'Report containing QUAST results, contig length/circularity/coverage statistics, and assembly log'
                              }
                             ],
              'warnings': warnings,
